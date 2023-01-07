@@ -1,0 +1,18 @@
+{
+    "config":
+    {
+        "caption": "PyDawgEngine",
+        "dimensions": [640, 480],
+        "icon": "r'data\\assets\\sprites\\me.png'",
+        "fullscreen": false,
+        "hideMouseCursor": false,
+        "debugMode": false,
+
+        "network":
+        {
+            "connectToServer": false,
+            "address": "69.420.1337.515"
+        }
+    }
+}
+
