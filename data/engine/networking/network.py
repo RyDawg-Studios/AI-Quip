@@ -8,7 +8,6 @@ class Network():
         self.port = port
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.address = (self.server, self.port)
-        print(self.connect())
 
     def connect(self, name='RyDawgE'):
         try:

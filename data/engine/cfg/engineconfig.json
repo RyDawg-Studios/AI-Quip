@@ -1,7 +1,7 @@
 {
     "config":
     {
-        "caption": "PyDawgEngine",
+        "caption": "AI Party!",
         "dimensions": [640, 480],
         "icon": "r'data\\assets\\sprites\\me.png'",
         "fullscreen": false,
@@ -10,8 +10,8 @@
 
         "network":
         {
-            "connectToServer": false,
-            "address": "69.420.1337.515"
+            "connectToServer": true,
+            "address": "127.0.0.1"
         }
     }
 }
