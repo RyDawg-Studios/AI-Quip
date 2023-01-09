@@ -1,4 +1,5 @@
 from data.engine.networking.network import Network
+import threading
 
 
 class NetworkManager():
@@ -8,11 +9,17 @@ class NetworkManager():
         self.network = None
 
     def activate(self):
+        net = threading.Thread(target=self.start, args=())
+        net.start()
+
+    def start(self):
         if self.pde.config_manager.config["config"]["network"]["connectToServer"]:
             self.network = Network(server="127.0.0.1")
+            self.network.connect()
+
+        while True:
+            self.network.update()
 
         
     def update(self):
-        while self.active:
-            if self.network is not None:
-                self.network.update()
+        pass

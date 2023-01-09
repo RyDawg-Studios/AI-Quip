@@ -10,4 +10,3 @@ class AIParty(Game):
         self.currentlevel = self.pde.level_manager.addlevel(level=TestLevel(man=self.pde.level_manager, pde=self.pde), 
                                                                         name="Main", active=True)
 
-        self.pde.network_manager.network.connect()
