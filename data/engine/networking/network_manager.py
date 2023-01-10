@@ -9,10 +9,10 @@ class NetworkManager():
         self.network = None
 
     def activate(self):
-        net = threading.Thread(target=self.start, args=())
+        net = threading.Thread(target=self.network_thread, args=())
         net.start()
 
-    def start(self):
+    def network_thread(self):
         if self.pde.config_manager.config["config"]["network"]["connectToServer"]:
             self.network = Network(server="127.0.0.1")
             self.network.connect()
