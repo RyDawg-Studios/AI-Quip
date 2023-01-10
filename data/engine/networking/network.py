@@ -21,7 +21,6 @@ class Network():
         self.client.close()
 
     def update(self):
-        if self.connected:
-            data = self.client.recv(1024).decode('utf-8')
-            if data:
-                print(data)
+        data = self.client.recv(1024)
+        if not data:
+            self.disconnect()
