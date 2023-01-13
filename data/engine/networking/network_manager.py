@@ -14,11 +14,16 @@ class NetworkManager():
 
     def network_thread(self):
         if self.pde.config_manager.config["config"]["network"]["connectToServer"]:
-            self.network = Network(server="127.0.0.1")
+            self.network = Network(owner=self, server="127.0.0.1")
             self.network.connect()
 
-        while True:
+        while self.active:
             self.network.update()
+
+    def disconnect(self):
+        self.network.disconnect()
+        self.active = False
+        return
 
         
     def update(self):

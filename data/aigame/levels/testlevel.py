@@ -5,4 +5,4 @@ class TestLevel(Level):
     def __init__(self, man, pde):
         super().__init__(man, pde)
 
-        self.objectManager.add_object(obj=AIQuip_PlayerObject(man=man, pde=pde))
+        self.pde.game.player = self.objectManager.add_object(obj=AIQuip_PlayerObject(man=man, pde=pde))

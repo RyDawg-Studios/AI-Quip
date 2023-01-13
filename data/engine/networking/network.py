@@ -1,8 +1,9 @@
-import sys, socket
-import pickle
+import socket
+import json
 
 class Network():
-    def __init__(self, server="", port=5050):
+    def __init__(self, owner, server="", port=5050):
+        self.owner = owner
         self.server = server
         self.port = port
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -15,12 +16,26 @@ class Network():
             self.connected = True
         except Exception as e:
             print(e)
+        return
 
     def disconnect(self):
         self.connected = False
         self.client.close()
+        return
+
+    def send_event(self, event={'event_type': 'ping', 'event_data': 'Hello!'}):
+        self.client.sendall(bytes(json.dumps(event), 'utf-8'))
+        return
 
     def update(self):
-        data = self.client.recv(1024)
-        if not data:
-            self.disconnect()
+        try:
+            data = json.loads(self.client.recv(1024).decode('utf-8'))
+            print(data)
+            if data["message_type"] == 'ping':
+                print(data['message_data']['data'])
+            elif data['message_type'] == 'event':
+                self.owner.pde.event_manager.handle_netevent(data)
+            if not data:
+                self.disconnect()
+        except Exception as e:
+            print(e)

@@ -59,6 +59,6 @@ class InputManager():
             self.hat_inputs = (0, 0)
 
         if pygame.K_ESCAPE in self.key_inputs:
-            self.pde.network_manager.network.disconnect()
+            self.pde.network_manager.disconnect()
             pygame.quit()
             sys.exit()
