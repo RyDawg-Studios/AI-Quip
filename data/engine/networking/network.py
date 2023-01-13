@@ -29,8 +29,7 @@ class Network():
 
     def update(self):
         try:
-            data = json.loads(self.client.recv(1024).decode('utf-8'))
-            print(data)
+            data = json.loads(self.client.recv(2048).decode('utf-8'))
             if data["message_type"] == 'ping':
                 print(data['message_data']['data'])
             elif data['message_type'] == 'event':

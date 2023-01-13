@@ -1,3 +1,4 @@
+from data.engine.eventdispatcher.eventdispatcher import EventDispatcher
 from data.engine.networking.network import Network
 import threading
 
@@ -8,6 +9,8 @@ class NetworkManager():
         self.pde = pde
         self.network = None
 
+        self.onjoinednetwork = EventDispatcher()
+
     def activate(self):
         net = threading.Thread(target=self.network_thread, args=())
         net.start()
@@ -16,6 +19,7 @@ class NetworkManager():
         if self.pde.config_manager.config["config"]["network"]["connectToServer"]:
             self.network = Network(owner=self, server="127.0.0.1")
             self.network.connect()
+            self.onjoinednetwork.call()
 
         while self.active:
             self.network.update()
