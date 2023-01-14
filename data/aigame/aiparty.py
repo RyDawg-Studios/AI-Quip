@@ -12,34 +12,40 @@ class AIParty(Game):
         self.currentlevel = self.pde.level_manager.addlevel(level=TestLevel(man=self.pde.level_manager, pde=self.pde), 
                                                                         name="Main", active=True)
 
-        self.pde.network_manager.onjoinednetwork.bind(self.joingame)
+        self.pde.network_manager.onjoinednetwork.bind(self.join_game)
 
         self.pde.event_manager.events['set_host'] = self.set_host
         self.pde.event_manager.events['set_id'] = self.set_id
 
     def set_id(self, args):
-        self.player._id = args["id"]
+        id = args["id"]
+        print(f"Name ID as {id}")
+        self.player._id = id
         return
 
-    def joingame(self):
-        self.setname()
+    def join_game(self):
         print("Joined Lobby")
+        self.set_name()
 
-    def setname(self):
+    def set_name(self):
         self.player.name = "RyDawgE"
         print(f"Name set as {self.player.name}")
-        self.pde.network_manager.network.send_event(event={'message_type': 'event', 'message_data': {'event_name': 'set_client_nickname', 'event_args': {'name': self.player.name}}})
-
+        # Send Name
+        event={'message_type': 'event', 'message_data': {'event_name': 'set_client_nickname', 'event_args': {'name': self.player.name}}}
+        #event={'message_type': 'ping', 'message_data': {'data': 'SetName'}}
+        self.pde.network_manager.network.send_event(event)
 
     def set_host(self, args):
-        print("Client set to host")
-        self.player.ishost = args["host"]
+        ishost = args["host"]
+        print(f"Name Host to {ishost}")
+        self.player.ishost = ishost
 
-    def startgame(self):
-        print(self.player.ishost)
+    def start_game(self):
         if self.player.ishost:
+            # Send Start Game
             event = {'message_type': 'event', 'message_data': {'event_name': 'start_game', 'event_args': {'host': self.player.ishost}}}
-            self.pde.network_manager.network.send_event(event=event)
+            #event={'message_type': 'ping', 'message_data': {'data': 'Start Game'}}
+            self.pde.network_manager.network.send_event(event)
 
         
 

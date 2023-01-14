@@ -23,18 +23,19 @@ class Network():
         self.client.close()
         return
 
-    def send_event(self, event={'event_type': 'ping', 'event_data': 'Hello!'}):
+    def send_event(self, event={'message_type': 'ping', 'message_data': {'data': "Default Message!"}}):
+        print(f"Sending Event: {event}")
         self.client.sendall(bytes(json.dumps(event), 'utf-8'))
-        return
 
     def update(self):
         try:
-            data = json.loads(self.client.recv(2048).decode('utf-8'))
+            data = json.loads(self.client.recv(1024).decode('utf-8'))
+            print(f"Receiving event: {data}")
             if data["message_type"] == 'ping':
                 print(data['message_data']['data'])
             elif data['message_type'] == 'event':
                 self.owner.pde.event_manager.handle_netevent(data)
             if not data:
                 self.disconnect()
-        except Exception as e:
-            print(e)
+        except:
+            return
