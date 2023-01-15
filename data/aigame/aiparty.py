@@ -31,7 +31,7 @@ class AIParty(Game):
         self.player.name = "RyDawgE"
         print(f"Name set as {self.player.name}")
         # Send Name
-        event={'message_type': 'event', 'message_data': {'event_name': 'set_client_nickname', 'event_args': {'name': self.player.name}}}
+        event={'message_type': 'event', 'message_data': {'event_name': 'set_client_nickname', 'event_args': {'name': self.player.name, 'id': self.player._id}}}
         #event={'message_type': 'ping', 'message_data': {'data': 'SetName'}}
         self.pde.network_manager.network.send_event(event)
 
