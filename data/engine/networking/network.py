@@ -49,4 +49,4 @@ class Network():
                     self.disconnect()
                     
         except Exception as e:
-            print(e)
+            print(f"Error receiving message. Data: {data} | Error: {e}")

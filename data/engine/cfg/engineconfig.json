@@ -1,9 +1,9 @@
 {
     "config":
     {
-        "caption": "AI Party!",
+        "caption": "Fool Me Twice",
         "dimensions": [640, 480],
-        "icon": "r'data\\assets\\sprites\\me.png'",
+        "icon": "r'data\\aigame\\assets\\sprites\\ui\\robot.png'",
         "fullscreen": false,
         "hideMouseCursor": false,
         "debugMode": false,

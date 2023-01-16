@@ -10,8 +10,3 @@ pygame.joystick.init()
 if __name__ == '__main__':
     engine = PyDawgEngine()
 
-
-
-    
-
-

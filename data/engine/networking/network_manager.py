@@ -25,7 +25,10 @@ class NetworkManager():
             self.network.update()
 
     def disconnect(self):
-        self.network.disconnect()
+        try:
+            self.network.disconnect()
+        except:
+            pass
         self.active = False
         return
 

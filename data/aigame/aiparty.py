@@ -1,5 +1,5 @@
 from data.engine.game.game import Game
-from data.aigame.levels.testlevel import TestLevel
+from data.aigame.levels.mainmenu import MainMenuLevel
 
 class AIParty(Game):
     def __init__(self, pde):
@@ -9,13 +9,14 @@ class AIParty(Game):
     def activate(self):
         super().activate()
 
-        self.currentlevel = self.pde.level_manager.addlevel(level=TestLevel(man=self.pde.level_manager, pde=self.pde), 
+        self.currentlevel = self.pde.level_manager.addlevel(level=MainMenuLevel(man=self.pde.level_manager, pde=self.pde), 
                                                                         name="Main", active=True)
 
         self.pde.network_manager.onjoinednetwork.bind(self.join_game)
 
         self.pde.event_manager.events['set_host'] = self.set_host
         self.pde.event_manager.events['set_id'] = self.set_id
+        self.pde.event_manager.events['gather_question'] = self.gather_question
 
     def set_id(self, args):
         id = args["id"]
@@ -40,12 +41,17 @@ class AIParty(Game):
         print(f"Name Host to {ishost}")
         self.player.ishost = ishost
 
+    def gather_question(self, args):
+        question = str(input("Enter question here: "))
+        self.pde.network_manager.network.send_event(event={'message_type': 'event', 'message_data': {'event_name': 'validate_question', 'event_args': {'text': question}}})
+
     def start_game(self):
         if self.player.ishost:
             # Send Start Game
             event = {'message_type': 'event', 'message_data': {'event_name': 'start_game', 'event_args': {'host': self.player.ishost}}}
             #event={'message_type': 'ping', 'message_data': {'data': 'Start Game'}}
             self.pde.network_manager.network.send_event(event)
+            
 
         
 

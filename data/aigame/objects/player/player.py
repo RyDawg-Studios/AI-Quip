@@ -8,8 +8,6 @@ class AIQuip_PlayerController(PlayerController):
         super().__init__(owner)
 
     def on_input(self, input):
-        if input == pygame.K_SPACE:
-            self.owner.pde.network_manager.activate()
         if input == pygame.K_s:
             self.owner.pde.game.start_game()
 
