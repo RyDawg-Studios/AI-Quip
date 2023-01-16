@@ -1,3 +1,4 @@
+from data.aigame.levels.lobby import LobbyLevel
 from data.engine.game.game import Game
 from data.aigame.levels.mainmenu import MainMenuLevel
 
@@ -20,13 +21,16 @@ class AIParty(Game):
 
     def set_id(self, args):
         id = args["id"]
-        print(f"Name ID as {id}")
+        print(f"Set ID to {id}")
         self.player._id = id
         return
 
     def join_game(self):
-        print("Joined Lobby")
         self.set_name()
+        
+        self.pde.level_manager.clearlevel()
+        self.currentlevel = self.pde.level_manager.addlevel(level=LobbyLevel(man=self.pde.level_manager, pde=self.pde), 
+                                                                        name="Main", active=True)
 
     def set_name(self):
         self.player.name = "RyDawgE"
@@ -38,7 +42,7 @@ class AIParty(Game):
 
     def set_host(self, args):
         ishost = args["host"]
-        print(f"Name Host to {ishost}")
+        print(f"Set Host to {ishost}")
         self.player.ishost = ishost
 
     def gather_question(self, args):
