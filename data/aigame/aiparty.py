@@ -16,6 +16,7 @@ class AIParty(Game):
 
         self.pde.network_manager.onjoinednetwork.bind(self.join_game)
 
+        self.pde.event_manager.events['wait_for_question'] = self.wait_for_question
         self.pde.event_manager.events['setup_player'] = self.setup_player
         self.pde.event_manager.events['gather_question'] = self.gather_question
 
@@ -27,6 +28,12 @@ class AIParty(Game):
     def join_game(self):        
         return
 
+    def wait_for_question(self, args):
+        print("Waiting For Question!")
+
+    def set_role(self, args):
+        self.player.role = args["role"]
+
     def setup_player(self, args):
         self.set_id(args["id"])
         self.set_host(args["host"])
@@ -35,7 +42,6 @@ class AIParty(Game):
         self.pde.level_manager.clearlevel()
         self.currentlevel = self.pde.level_manager.addlevel(level=LobbyLevel(man=self.pde.level_manager, pde=self.pde), 
                                                                         name="Main", active=True)
-
     def set_name(self):
         self.player.name = "RyDawgE"
         print(f"Name set as {self.player.name}")
