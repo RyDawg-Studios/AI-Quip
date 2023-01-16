@@ -1,4 +1,5 @@
 from data.aigame.levels.lobby import LobbyLevel
+from data.engine.eventdispatcher.eventdispatcher import EventDispatcher
 from data.engine.game.game import Game
 from data.aigame.levels.mainmenu import MainMenuLevel
 
@@ -15,19 +16,22 @@ class AIParty(Game):
 
         self.pde.network_manager.onjoinednetwork.bind(self.join_game)
 
-        self.pde.event_manager.events['set_host'] = self.set_host
-        self.pde.event_manager.events['set_id'] = self.set_id
+        self.pde.event_manager.events['setup_player'] = self.setup_player
         self.pde.event_manager.events['gather_question'] = self.gather_question
 
-    def set_id(self, args):
-        id = args["id"]
+    def set_id(self, id):
         print(f"Set ID to {id}")
         self.player._id = id
         return
 
-    def join_game(self):
+    def join_game(self):        
+        return
+
+    def setup_player(self, args):
+        self.set_id(args["id"])
+        self.set_host(args["host"])
         self.set_name()
-        
+
         self.pde.level_manager.clearlevel()
         self.currentlevel = self.pde.level_manager.addlevel(level=LobbyLevel(man=self.pde.level_manager, pde=self.pde), 
                                                                         name="Main", active=True)
@@ -40,10 +44,9 @@ class AIParty(Game):
         #event={'message_type': 'ping', 'message_data': {'data': 'SetName'}}
         self.pde.network_manager.network.send_event(event)
 
-    def set_host(self, args):
-        ishost = args["host"]
-        print(f"Set Host to {ishost}")
-        self.player.ishost = ishost
+    def set_host(self, host):
+        self.player.ishost = host
+        print(f"Set Host to {self.player.ishost}")
 
     def gather_question(self, args):
         question = str(input("Enter question here: "))

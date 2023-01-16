@@ -11,6 +11,7 @@ class LobbyLevel(Level):
 
         self.pde.game.player = self.objectManager.add_object(obj=AIQuip_PlayerObject(man=man, pde=pde))
 
+        print(self.pde.game.player.ishost)
 
         if self.pde.game.player.ishost:
             self.objectManager.add_object(obj=ButtonElement(man=man,pde=pde, position=[320, 240], scale=[64,32],useCenterForPosition=True, sprite=r"data\aigame\assets\sprites\ui\start.png", bind=self.pde.game.start_game))
