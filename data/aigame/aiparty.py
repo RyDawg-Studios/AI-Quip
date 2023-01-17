@@ -19,6 +19,8 @@ class AIParty(Game):
         self.pde.event_manager.events['wait_for_question'] = self.wait_for_question
         self.pde.event_manager.events['setup_player'] = self.setup_player
         self.pde.event_manager.events['gather_question'] = self.gather_question
+        self.pde.event_manager.events['set_role'] = self.set_role
+
 
     def set_id(self, id):
         print(f"Set ID to {id}")
@@ -32,7 +34,9 @@ class AIParty(Game):
         print("Waiting For Question!")
 
     def set_role(self, args):
-        self.player.role = args["role"]
+        role = args["role"]
+        self.player.role = role
+        print(f"Role set to: {role}")
 
     def setup_player(self, args):
         self.set_id(args["id"])
