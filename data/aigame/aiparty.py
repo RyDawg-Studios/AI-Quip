@@ -1,5 +1,7 @@
 from data.aigame.levels.lobby import LobbyLevel
+from data.aigame.levels.revealquestion import RevealQuestionLevel
 from data.aigame.levels.revealroles import RevealRolesLevel
+from data.aigame.levels.wait import WaitLevel
 from data.engine.eventdispatcher.eventdispatcher import EventDispatcher
 from data.engine.game.game import Game
 from data.aigame.levels.mainmenu import MainMenuLevel
@@ -9,6 +11,7 @@ class AIParty(Game):
         super().__init__(pde)
         self.player = None
         self.playerinfo = {}
+        self.question = ""
 
     def activate(self):
         super().activate()
@@ -25,10 +28,7 @@ class AIParty(Game):
         self.pde.event_manager.events['set_playersinfo'] = self.set_playersinfo
         self.pde.event_manager.events['game_starting'] = self.game_starting
         self.pde.event_manager.events['reveal_roles'] = self.reveal_roles
-
-
-
-
+        self.pde.event_manager.events['reveal_question'] = self.reveal_question
 
 
 
@@ -41,7 +41,9 @@ class AIParty(Game):
         return
 
     def wait_for_question(self, args):
-        print("Waiting For Question!")
+        self.pde.level_manager.clearlevel()
+        self.currentlevel = self.pde.level_manager.addlevel(level=WaitLevel(man=self.pde.level_manager, pde=self.pde), 
+                                                                        name="Main", active=True)
 
     def reveal_roles(self, args):
         self.pde.network_manager.network.send_event(event={'message_type': 'event', 'message_data': {'event_name': 'retrieve_playerinfo', 'event_args': {'id': self.pde.game.player._id}}})
@@ -82,6 +84,13 @@ class AIParty(Game):
     def gather_question(self, args):
         question = str(input("Enter question here: "))
         self.pde.network_manager.network.send_event(event={'message_type': 'event', 'message_data': {'event_name': 'validate_question', 'event_args': {'text': question}}})
+
+    def reveal_question(self, args):
+        self.question = args["text"]
+
+        self.pde.level_manager.clearlevel()
+        self.currentlevel = self.pde.level_manager.addlevel(level=RevealQuestionLevel(man=self.pde.level_manager, pde=self.pde), 
+                                                                        name="Main", active=True)
 
     def start_game(self):
         if self.player.ishost:
