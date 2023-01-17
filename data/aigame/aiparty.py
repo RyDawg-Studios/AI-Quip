@@ -30,8 +30,6 @@ class AIParty(Game):
 
 
 
-    def set_playersinfo(self, args):
-        self.playerinfo = args["info"]
 
 
     def set_id(self, id):
@@ -46,10 +44,16 @@ class AIParty(Game):
         print("Waiting For Question!")
 
     def reveal_roles(self, args):
+        self.pde.network_manager.network.send_event(event={'message_type': 'event', 'message_data': {'event_name': 'retrieve_playerinfo', 'event_args': {'id': self.pde.game.player._id}}})
+
+    def set_playersinfo(self, args):
+        info = args["info"]
+        print(f"args: {info}")
+        self.playerinfo = args["info"]
+        
         self.pde.level_manager.clearlevel()
         self.currentlevel = self.pde.level_manager.addlevel(level=RevealRolesLevel(man=self.pde.level_manager, pde=self.pde), 
                                                                         name="Main", active=True)
-
     def set_role(self, args):
         role = args["role"]
         self.player.role = role
