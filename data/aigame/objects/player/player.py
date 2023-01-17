@@ -16,7 +16,7 @@ class AIQuip_PlayerObject(Object):
         super().__init__(man, pde)
         self.ishost = False
         self.name = 'DefaultName'
-        self.role = ''
+        self.role = 'DefaultRole'
         self._id = -1
 
         self.components["PlayerController"] = AIQuip_PlayerController(owner=self)

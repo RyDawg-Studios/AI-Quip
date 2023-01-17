@@ -1,4 +1,5 @@
 from data.aigame.levels.lobby import LobbyLevel
+from data.aigame.levels.revealroles import RevealRolesLevel
 from data.engine.eventdispatcher.eventdispatcher import EventDispatcher
 from data.engine.game.game import Game
 from data.aigame.levels.mainmenu import MainMenuLevel
@@ -7,6 +8,7 @@ class AIParty(Game):
     def __init__(self, pde):
         super().__init__(pde)
         self.player = None
+        self.playerinfo = {}
 
     def activate(self):
         super().activate()
@@ -20,6 +22,16 @@ class AIParty(Game):
         self.pde.event_manager.events['setup_player'] = self.setup_player
         self.pde.event_manager.events['gather_question'] = self.gather_question
         self.pde.event_manager.events['set_role'] = self.set_role
+        self.pde.event_manager.events['set_playersinfo'] = self.set_playersinfo
+        self.pde.event_manager.events['game_starting'] = self.game_starting
+        self.pde.event_manager.events['reveal_roles'] = self.reveal_roles
+
+
+
+
+
+    def set_playersinfo(self, args):
+        self.playerinfo = args["info"]
 
 
     def set_id(self, id):
@@ -32,6 +44,11 @@ class AIParty(Game):
 
     def wait_for_question(self, args):
         print("Waiting For Question!")
+
+    def reveal_roles(self, args):
+        self.pde.level_manager.clearlevel()
+        self.currentlevel = self.pde.level_manager.addlevel(level=RevealRolesLevel(man=self.pde.level_manager, pde=self.pde), 
+                                                                        name="Main", active=True)
 
     def set_role(self, args):
         role = args["role"]
@@ -68,7 +85,6 @@ class AIParty(Game):
             event = {'message_type': 'event', 'message_data': {'event_name': 'start_game', 'event_args': {'host': self.player.ishost}}}
             #event={'message_type': 'ping', 'message_data': {'data': 'Start Game'}}
             self.pde.network_manager.network.send_event(event)
-            
 
-        
-
+    def game_starting(self, args):
+        return
