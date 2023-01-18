@@ -15,6 +15,8 @@ class RevealResponseLevel(Level):
             if self.pde.game.playerinfo[player]["role"] == "answerer":
                 answerer = self.pde.game.playerinfo[player]["name"]
 
+        self.objectManager.add_object(obj=FadeInTextElement(man=man,pde=pde, position=[320, 160], scale=[300,32],useCenterForPosition=True, text=self.pde.game.question))
+
 
         response = self.pde.game.response["text"]
         self.objectManager.add_object(obj=FadeInTextElement(man=man,pde=pde, position=[320, 256 + -32], scale=[300,32],useCenterForPosition=True, text=f"{answerer} replies:"))
