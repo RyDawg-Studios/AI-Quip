@@ -1,5 +1,6 @@
 from data.aigame.levels.lobby import LobbyLevel
 from data.aigame.levels.revealquestion import RevealQuestionLevel
+from data.aigame.levels.revealresponse import RevealResponseLevel
 from data.aigame.levels.revealroles import RevealRolesLevel
 from data.aigame.levels.wait import WaitLevel
 from data.engine.eventdispatcher.eventdispatcher import EventDispatcher
@@ -12,6 +13,7 @@ class AIParty(Game):
         self.player = None
         self.playerinfo = {}
         self.question = ""
+        self.response = {"type": "", "text": ""}
 
     def activate(self):
         super().activate()
@@ -29,6 +31,8 @@ class AIParty(Game):
         self.pde.event_manager.events['game_starting'] = self.game_starting
         self.pde.event_manager.events['reveal_roles'] = self.reveal_roles
         self.pde.event_manager.events['reveal_question'] = self.reveal_question
+        self.pde.event_manager.events['reveal_response'] = self.reveal_response
+
 
 
 
@@ -56,6 +60,7 @@ class AIParty(Game):
         self.pde.level_manager.clearlevel()
         self.currentlevel = self.pde.level_manager.addlevel(level=RevealRolesLevel(man=self.pde.level_manager, pde=self.pde), 
                                                                         name="Main", active=True)
+
     def set_role(self, args):
         role = args["role"]
         self.player.role = role
@@ -72,9 +77,7 @@ class AIParty(Game):
     def set_name(self):
         self.player.name = "RyDawgE"
         print(f"Name set as {self.player.name}")
-        # Send Name
         event={'message_type': 'event', 'message_data': {'event_name': 'set_client_nickname', 'event_args': {'name': self.player.name, 'id': self.player._id}}}
-        #event={'message_type': 'ping', 'message_data': {'data': 'SetName'}}
         self.pde.network_manager.network.send_event(event)
 
     def set_host(self, host):
@@ -92,12 +95,25 @@ class AIParty(Game):
         self.currentlevel = self.pde.level_manager.addlevel(level=RevealQuestionLevel(man=self.pde.level_manager, pde=self.pde), 
                                                                         name="Main", active=True)
 
-    def start_game(self):
-        if self.player.ishost:
-            # Send Start Game
-            event = {'message_type': 'event', 'message_data': {'event_name': 'start_game', 'event_args': {'host': self.player.ishost}}}
-            #event={'message_type': 'ping', 'message_data': {'data': 'Start Game'}}
-            self.pde.network_manager.network.send_event(event)
-
     def game_starting(self, args):
         return
+
+    def start_game(self):
+        if self.player.ishost:
+            event = {'message_type': 'event', 'message_data': {'event_name': 'start_game', 'event_args': {'host': self.player.ishost}}}
+            self.pde.network_manager.network.send_event(event)
+
+    def send_manual_response(self, response):
+        event = {'message_type': 'event', 'message_data': {'event_name': 'get_response', 'event_args': {"type": "manual", "text": str(response)}}}
+        self.pde.network_manager.network.send_event(event)
+
+    def send_ai_response(self):
+        event = {'message_type': 'event', 'message_data': {'event_name': 'get_response', 'event_args': {"type": "ai", "text": ""}}}
+        self.pde.network_manager.network.send_event(event)
+
+    def reveal_response(self, args):
+        self.response = args
+        self.pde.level_manager.clearlevel()
+        self.currentlevel = self.pde.level_manager.addlevel(level=RevealResponseLevel(man=self.pde.level_manager, pde=self.pde), 
+                                                                        name="Main", active=True)
+

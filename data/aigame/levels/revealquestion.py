@@ -18,4 +18,12 @@ class RevealQuestionLevel(Level):
         text = f"{asker} asks... {self.pde.game.question}"
         self.objectManager.add_object(obj=FadeInTextElement(man=man,pde=pde, position=[320, 240], scale=[400,32],useCenterForPosition=True, text=text))
 
+        if self.pde.game.player.role == "answerer":
+            self.objectManager.add_object(obj=ButtonElement(man=man,pde=pde, position=[220, 320], scale=[64,32],useCenterForPosition=True, sprite=r"data\aigame\assets\sprites\ui\manual.png", bind=self.send_manual_response))
+            self.objectManager.add_object(obj=ButtonElement(man=man,pde=pde, position=[420, 320], scale=[64,32],useCenterForPosition=True, sprite=r"data\aigame\assets\sprites\ui\ai-gen.png", bind=self.send_ai_response))
 
+    def send_manual_response(self):
+        self.pde.game.send_manual_response(response=input("Type response: "))
+
+    def send_ai_response(self):
+        self.pde.game.send_ai_response()
