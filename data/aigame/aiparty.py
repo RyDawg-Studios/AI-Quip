@@ -1,7 +1,9 @@
+from data.aigame.levels.gatherquestion import GatherQuestionLevel
 from data.aigame.levels.lobby import LobbyLevel
 from data.aigame.levels.revealquestion import RevealQuestionLevel
 from data.aigame.levels.revealresponse import RevealResponseLevel
 from data.aigame.levels.revealroles import RevealRolesLevel
+from data.aigame.levels.revealvotes import RevealVotesLevel
 from data.aigame.levels.wait import WaitLevel
 from data.engine.eventdispatcher.eventdispatcher import EventDispatcher
 from data.engine.game.game import Game
@@ -14,6 +16,7 @@ class AIParty(Game):
         self.playerinfo = {}
         self.question = ""
         self.response = {"type": "", "text": ""}
+        self.votes = {"human": [], "robot": []}
 
     def activate(self):
         super().activate()
@@ -32,6 +35,8 @@ class AIParty(Game):
         self.pde.event_manager.events['reveal_roles'] = self.reveal_roles
         self.pde.event_manager.events['reveal_question'] = self.reveal_question
         self.pde.event_manager.events['reveal_response'] = self.reveal_response
+        self.pde.event_manager.events['reveal_votes'] = self.reveal_votes
+
 
 
 
@@ -69,13 +74,16 @@ class AIParty(Game):
     def setup_player(self, args):
         self.set_id(args["id"])
         self.set_host(args["host"])
-        self.set_name()
+        self.send_name()
 
         self.pde.level_manager.clearlevel()
         self.currentlevel = self.pde.level_manager.addlevel(level=LobbyLevel(man=self.pde.level_manager, pde=self.pde), 
                                                                         name="Main", active=True)
-    def set_name(self):
-        self.player.name = "RyDawgE"
+
+    def set_name(self, name="Default"):
+        self.player.name = name
+
+    def send_name(self):
         print(f"Name set as {self.player.name}")
         event={'message_type': 'event', 'message_data': {'event_name': 'set_client_nickname', 'event_args': {'name': self.player.name, 'id': self.player._id}}}
         self.pde.network_manager.network.send_event(event)
@@ -84,9 +92,20 @@ class AIParty(Game):
         self.player.ishost = host
         print(f"Set Host to {self.player.ishost}")
 
+    
+    def send_question(self, text):
+        self.question = text
+        self.pde.network_manager.network.send_event(event={'message_type': 'event', 'message_data': {'event_name': 'validate_question', 'event_args': {'text': self.question}}})
+
+
     def gather_question(self, args):
-        question = str(input("Enter question here: "))
-        self.pde.network_manager.network.send_event(event={'message_type': 'event', 'message_data': {'event_name': 'validate_question', 'event_args': {'text': question}}})
+        try:
+            self.pde.level_manager.clearlevel()
+            self.currentlevel = self.pde.level_manager.addlevel(level=GatherQuestionLevel(man=self.pde.level_manager, pde=self.pde), 
+                                                                            name="Main", active=True)
+            self.currentlevel.tb.confirm_event.bind(self.send_question) 
+        except Exception as e:
+            print(e)                                                                      
 
     def reveal_question(self, args):
         self.question = args["text"]
@@ -96,7 +115,10 @@ class AIParty(Game):
                                                                         name="Main", active=True)
 
     def game_starting(self, args):
-        return
+        print("RAHH")
+        self.question = ""
+        self.response = {"type": "", "text": ""}
+        self.votes = {"human": [], "robot": []}
 
     def start_game(self):
         if self.player.ishost:
@@ -116,4 +138,12 @@ class AIParty(Game):
         self.pde.level_manager.clearlevel()
         self.currentlevel = self.pde.level_manager.addlevel(level=RevealResponseLevel(man=self.pde.level_manager, pde=self.pde), 
                                                                         name="Main", active=True)
+    def vote(self, vote):
+        event = {'message_type': 'event', 'message_data': {'event_name': 'receive_vote', 'event_args': {"vote": vote, "id": self.player._id}}}
+        self.pde.network_manager.network.send_event(event)
 
+    def reveal_votes(self, args):
+        self.votes = args["votes"]
+        self.pde.level_manager.clearlevel()
+        self.currentlevel = self.pde.level_manager.addlevel(level=RevealVotesLevel(man=self.pde.level_manager, pde=self.pde), 
+                                                                        name="Main", active=True)                                               
